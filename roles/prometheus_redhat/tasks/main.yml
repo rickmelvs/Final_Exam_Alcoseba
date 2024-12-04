@@ -1,0 +1,38 @@
+---
+- name: Install Prometheus dependencies on CentOS
+  yum:
+    name: curl
+    state: present
+
+- name: Download Prometheus binary on CentOS
+  get_url:
+    url: https://github.com/prometheus/prometheus/releases/download/v2.46.0/prometheus-2.46.0.linux-amd64.tar.gz
+    dest: /tmp/prometheus.tar.gz
+
+- name: Create the directory for Prometheus in /opt on CentOS
+  file:
+    path: /opt/prometheus
+    state: directory
+    mode: '0755'
+
+- name: Extract Prometheus archive on CentOS
+  unarchive:
+    src: /tmp/prometheus.tar.gz
+    dest: /opt/prometheus
+    remote_src: yes
+
+- name: Create Prometheus service file on CentOS
+  copy:
+    src: prometheus.service
+    dest: /etc/systemd/system/prometheus.service
+    mode: '0644'
+
+- name: Reload systemd to register prometheus service
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable Prometheus service on CentOS
+  systemd:
+    name: prometheus
+    enabled: yes
+    state: started

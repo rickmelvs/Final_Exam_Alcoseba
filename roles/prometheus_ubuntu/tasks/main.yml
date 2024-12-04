@@ -1,0 +1,23 @@
+---
+- name: Install required package
+  apt:
+    name: prometheus
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable Prometheus service
+  service:
+    name: prometheus
+    state: restarted
+    enabled: true
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install Prometheus dependencies
+  apt:
+    name:
+    - gcc
+    - make
+    - wget
+    - libgd-dev
+    state: latest
+  when: ansible_distribution == "Ubuntu"
